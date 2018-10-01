@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,27 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'chatapp';
+  
+  items: AngularFireList<any>;
+  msg: string = '';
+  editMsg: boolean = false;
+  editId: number;
+
+  constructor(public af: AngularFireDatabase) {
+    this.items = af.list('/messages');
+  }
+
+  send(chatMsg: string) {
+    this.items.push({ message: chatMsg });
+    this.msg = '';
+  }
+
+  delete(key:string) {
+    this.items.remove(key);
+  }
+
+  edit(key:string, message: string) {
+    this.items.update(key, { message: message });
+    this.editMsg = false;
+  }
 }
